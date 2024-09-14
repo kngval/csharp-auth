@@ -19,11 +19,13 @@ public class AuthRepository : IAuthInterface
     private readonly AuthContext _context;
     private readonly IConfiguration _config;
     private readonly HttpClient _httpClient;
-    public AuthRepository(IConfiguration config,AuthContext context,HttpClient httpClient)
+    private readonly TokenHelper _tokenHelper;
+    public AuthRepository(IConfiguration config,AuthContext context,HttpClient httpClient,TokenHelper tokenHelper)
     {
         _context = context;
         _config = config;
         _httpClient = httpClient;
+        _tokenHelper = tokenHelper;
     }
 
     public async Task<IEnumerable<UserEntity>> GetAllUsers()
@@ -82,7 +84,8 @@ public class AuthRepository : IAuthInterface
     
     public async Task<UserEntity> CreateName(NamesDto names)
     {
-      
+     var userId = _tokenHelper.GetUserIdFromToken();      
+//     var user = _context.Users.Include
     }
 
 }
