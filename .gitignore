@@ -1,0 +1,71 @@
+# Ignore the bin and obj directories
+bin/
+obj/
+
+# Ignore build outputs
+*.dll
+*.exe
+*.log
+*.cache
+*.pdb
+
+# Ignore user-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore Rider / VS Code / Visual Studio files
+.idea/
+.vscode/
+.vscode/*
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Ignore logs
+*.log
+
+# Ignore test results
+TestResults/
+
+# Ignore publish outputs
+publish/
+
+# Ignore package manager output
+node_modules/
+packages/
+libman.json
+.vsix/
+.vs/
+
+# Ignore any secrets in environment settings
+.env
+
+# Ignore migrations
+Migrations/
+
+# Ignore nuget packages
+*.nupkg
+*.snupkg
+.nuget/
+
+# Ignore generated files from build
+*.lock.json
+project.lock.json
+
+# Ignore Resharper files
+*.DotSettings.user
+_ReSharper*/
+
+# Ignore sensitive files like the appsettings.json (for dev)
+appsettings.Development.json
+appsettings.Local.json
+
+# Optional: ignore all appsettings.json (remove if you use this to configure other environments)
+appsettings.json
+
