@@ -67,6 +67,17 @@ namespace jwt.Controllers
           return Ok(todo);
         }
       }
+      [Authorize] 
+      [HttpPost("create-names")]
+      public async Task<ActionResult<NamesEntity>> CreateNames(NamesDto names)
+      {
+        var userNames = await _userRepo.CreateName(names);
+        if(userNames == null)
+        {
+          return BadRequest("Error Creating Names");
+        }
+        return Ok(userNames); 
+      }
 
     }
 

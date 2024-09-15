@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder configs
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddAuthentication(opt =>
 {
@@ -34,6 +36,7 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 builder.Services.AddDbContext<AuthContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("authserver")));
+builder.Services.AddScoped<TokenHelper>();
 builder.Services.AddScoped<IAuthInterface, AuthRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

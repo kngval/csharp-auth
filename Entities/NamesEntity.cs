@@ -1,7 +1,7 @@
 
 
 public class NamesEntity {
-  public int id {get;set;} 
-  public required string firstname {get;set;}
-  public required string lastname {get;set;}
+  public int Id {get;set;} 
+  public string firstname {get;set;} = string.Empty;
+  public string lastname {get;set;} = string.Empty;
 }
