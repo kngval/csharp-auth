@@ -9,6 +9,7 @@ using jwtapp.Data;
 using jwtapp.Repository;
 using jwtapp.Interface;
 using System.Text;
+using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -34,6 +35,9 @@ builder.Services.AddAuthentication(opt =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
     };
+});
+builder.Services.AddAuthorization(opt => {
+  opt.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role,"admin"));
 });
 builder.Services.AddDbContext<AuthContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("authserver")));
 builder.Services.AddScoped<TokenHelper>();

@@ -12,8 +12,8 @@ public class AuthContext : DbContext
     {
         modelBuilder.Entity<UserEntity>()
                 .HasOne(u => u.Names)  // Establish the one-to-one or one-to-many relationship
-                .WithMany()            // Use `.WithMany()` or `.WithOne()` depending on your relationship
-                .HasForeignKey(u => u.NamesId)
+                .WithOne()            // Use `.WithMany()` or `.WithOne()` depending on your relationship
+                .HasForeignKey<UserEntity>(u => u.NamesId)
                 .OnDelete(DeleteBehavior.Cascade);  // Add the cascade behavior explicitly if necessary
 
         modelBuilder.Entity<UserEntity>().HasKey(u => u.Id);

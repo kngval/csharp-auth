@@ -9,7 +9,8 @@ public static class AuthMapping {
     return new UserEntity()
     {
       Username = user.Username,
-      PasswordHash = user.PasswordHash
+      PasswordHash = user.PasswordHash,
+      Role = user.Role
     };
   }
 

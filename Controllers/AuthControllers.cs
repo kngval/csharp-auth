@@ -36,7 +36,7 @@ namespace jwt.Controllers
       }
 
       [HttpPost("login")]
-      public async Task<ActionResult<string>> Login([FromBody] CreateUserDto userDto)
+      public async Task<ActionResult<string>> Login([FromBody] LoginUserDto userDto)
       {
         var token = await _userRepo.Login(userDto); 
         if(token is null)
@@ -49,12 +49,29 @@ namespace jwt.Controllers
 
       [HttpPost("register")]
       public async Task<ActionResult<string>> Register(CreateUserDto userDto){
-        await _userRepo.Register(userDto);
+       try{
+         if(string.IsNullOrWhiteSpace(userDto.Username))
+         {
+           return BadRequest("Username field is required");
+         }
+         if(string.IsNullOrWhiteSpace(userDto.PasswordHash))
+         {
+           return BadRequest("Password field is required");
+         }
+         if(string.IsNullOrWhiteSpace(userDto.Role))
+         {
+           return BadRequest("Role is required");
+         }
+        var user = await _userRepo.Register(userDto);
+        if(user == null) return BadRequest("Ewan ko ano nangyari");
+        return CreatedAtAction(nameof(Register), new { id = user.Id }, user);
 
+       } catch (InvalidOperationException ex){
+         return BadRequest(new {message = ex.Message });
+       }
 
-        return Ok("User Created Successfully");
       }
-      [Authorize]
+      [Authorize(Policy = "AdminOnly")]
       [HttpGet("fake-data")]
       public async Task<ActionResult<Todo>> FetchFakeData()
       {

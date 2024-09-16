@@ -28,7 +28,7 @@ public class AuthRepository : IAuthInterface
         _tokenHelper = tokenHelper;
     }
 
-    public async Task<string?> Login(CreateUserDto userDto)
+    public async Task<string?> Login(LoginUserDto userDto)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
         if (user is null)
@@ -40,23 +40,33 @@ public class AuthRepository : IAuthInterface
         {
             return null;
         }
-        var token = CreateToken(user.Id, user.Username);
+
+        
+        var token = CreateToken(user.Id, user.Username,user.Role);
         return token;
     }
-    public async Task Register(CreateUserDto user)
+    public async Task<UserEntity?> Register(CreateUserDto user)
     {
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == user.Username);
+        if(existingUser != null)
+        {
+          throw new InvalidOperationException("User already Exists");
+        }
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
         UserEntity userEnt = user.ToUserEntity();
         userEnt.PasswordHash = hashedPassword;
         await _context.Users.AddAsync(userEnt);
         await _context.SaveChangesAsync();
+
+        return userEnt;
     }
 
-    private string CreateToken(int id, string username)
+    private string CreateToken(int id, string username,string role)
     {
         List<Claim> claims = new List<Claim>(){
        new Claim(JwtRegisteredClaimNames.Sub,id.ToString()),
-       new Claim (ClaimTypes.Name, username)
+       new Claim (ClaimTypes.Name, username),
+       new Claim(ClaimTypes.Role, role)
      };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("Jwt:Key").Value!));
@@ -81,9 +91,9 @@ public class AuthRepository : IAuthInterface
     {
         NamesEntity namesEntity = names.ToNamesEntity();
         var userId = _tokenHelper.GetUserIdFromToken();
-        if(userId != null)
+        if (userId != null)
         {
-          Console.WriteLine(userId);
+            Console.WriteLine(userId);
         }
         var user = _context.Users.Include(u => u.Names).SingleOrDefault(u => u.Id == userId);
 
@@ -101,19 +111,21 @@ public class AuthRepository : IAuthInterface
             }
             user.Names.firstname = names.firstname;
             user.Names.lastname = names.lastname;
+
+            await _context.Names.AddAsync(namesEntity);
+            await _context.SaveChangesAsync();
+            user.NamesId = namesEntity.Id;
+            await _context.SaveChangesAsync();
+            return namesEntity;
         }
-        await _context.Names.AddAsync(namesEntity);
-        await _context.SaveChangesAsync();        
-        user.NamesId = namesEntity.Id;
-        await _context.SaveChangesAsync();
-        return namesEntity;
+        return null;
     }
 
     public async Task<IEnumerable<UserEntity>> GetAllUsers()
     {
-      var users = await _context.Users.Include(u => u.Names).ToListAsync();
-      
-      return users;
+        var users = await _context.Users.ToListAsync();
+
+        return users;
     }
 
 }
