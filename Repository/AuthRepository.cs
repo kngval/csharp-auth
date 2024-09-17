@@ -123,7 +123,7 @@ public class AuthRepository : IAuthInterface
 
     public async Task<IEnumerable<UserEntity>> GetAllUsers()
     {
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.Users.Include(u => u.Names).ToListAsync();
 
         return users;
     }
